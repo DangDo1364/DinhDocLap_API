@@ -21,6 +21,7 @@ namespace DinhDocLap_API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                  
                 });
     }
 }

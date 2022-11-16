@@ -28,15 +28,21 @@ namespace DinhDocLap_API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
             services.AddControllers();
             services.AddDbContext<MyDBContext>(options => {
-                options.UseSqlServer(Configuration.GetConnectionString("MyDB"));
+                options.UseSqlServer(Configuration.GetConnectionString("MyDB"));    
             });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DinhDocLap_API", Version = "v1" });
             });
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,13 +54,20 @@ namespace DinhDocLap_API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DinhDocLap_API v1"));
             }
-
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }    
+     
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseRouting();
-
+            app.UseCors(
+            options => options.WithOrigins("https://localhost:44332/").AllowAnyMethod()
+             );
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

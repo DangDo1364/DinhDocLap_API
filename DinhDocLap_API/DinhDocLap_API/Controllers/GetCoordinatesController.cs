@@ -1,8 +1,11 @@
-﻿using DinhDocLap_API.Data;
+﻿using Azure;
+using DinhDocLap_API.Data;
 using DinhDocLap_API.GeoJSON;
 using DinhDocLap_API.Model;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +13,9 @@ using System.Threading.Tasks;
 
 namespace DinhDocLap_API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("MyPolicy")]
+    [Route("api/[controller]")]
     public class GetCoordinatesController : ControllerBase
     {
         private readonly MyDBContext _context;
@@ -20,18 +24,16 @@ namespace DinhDocLap_API.Controllers
             _context = context;
         }
         [HttpGet]
-        public IActionResult GetAllBlockType()
+        public string GetByID(int id)
         {
-            var listBlockType = _context.blockTypes.ToList();
-            return Ok(listBlockType);
-        }
-        [HttpGet("{id}")]
-        public string GetCoordinates(int id)
-        {
+         
             List<Block> blocks = _context.blocks.Where(b=>b.IDBT==id).ToList();
             GeoJSONFormat geo = new GeoJSONFormat();
 
             geo.type = "FeatureCollection";
+            geo.generator = "overpass-ide";
+            geo.copyright = "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.";
+            geo.timestamp = "2022-11-13T02:23:20Z";
 
             List<Features> listFeatures = new List<Features>();
 
@@ -42,13 +44,10 @@ namespace DinhDocLap_API.Controllers
                 features.id = b.IDB.ToString();
                 features.type = "Feature";
 
-                BlockType blockType = _context.blockTypes.Where(b => b.IDBT == id).FirstOrDefault();
-
-                if (blockType == null)
-                    return "";
-
                 Properties properties = new Properties();
 
+                BlockType blockType = _context.blockTypes.ToArray().Where(b => b.IDBT == id).FirstOrDefault();
+        
                 properties.id = b.IDB.ToString();
                 properties.blockName = blockType.blockName;
                 properties.height = blockType.height;
@@ -67,19 +66,20 @@ namespace DinhDocLap_API.Controllers
                  {
                      fb.IDF,
                      b.IDB,
-                 }).Where(kq => kq.IDB == b.IDB).Select(kq => kq.IDF).FirstOrDefault();
+                     b.IDBT,
+                 }).Where(kq => kq.IDB == b.IDB).Select(kq => kq.IDF).FirstOrDefault();         
 
                 var nodes = _context.nodes.Join(_context.faceNodes,
-                   n => n.IDN,
-                   fn => fn.IDN,
-                   (n, fn) => new
-                   {
-                       fn.IDF,
-                       n.x,
-                       n.y,
-                       n.z,
-                       fn.seq,
-                   }).Where(kq => kq.IDF == idFace).OrderBy(kq => kq.seq).ToArray();
+                  n => n.IDN,
+                  fn => fn.IDN,
+                  (n, fn) => new
+                  {
+                      fn.IDF,
+                      n.x,
+                      n.y,
+                      n.z,
+                      fn.seq,
+                  }).Where(kq => kq.IDF == idFace).OrderBy(kq => kq.seq).ToArray();
 
                 List<double[]> coordinates = new List<double[]>();
 
@@ -102,7 +102,8 @@ namespace DinhDocLap_API.Controllers
 
             geo.features = listFeatures;
             var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(geo);
-            return jsonString;
+
+            return (jsonString);
         }
     }
 }

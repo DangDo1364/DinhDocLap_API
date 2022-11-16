@@ -59,3 +59,6 @@ C:\Users\thayk\source\repos\DinhDocLap_API\DinhDocLap_API\DinhDocLap_API\obj\Deb
 C:\Users\thayk\source\repos\DinhDocLap_API\DinhDocLap_API\DinhDocLap_API\obj\Debug\net5.0\ref\DinhDocLap_API.dll
 C:\Users\thayk\source\repos\DinhDocLap_API\DinhDocLap_API\DinhDocLap_API\obj\Debug\net5.0\DinhDocLap_API.pdb
 C:\Users\thayk\source\repos\DinhDocLap_API\DinhDocLap_API\DinhDocLap_API\obj\Debug\net5.0\DinhDocLap_API.genruntimeconfig.cache
+C:\Users\thayk\source\repos\DinhDocLap_API\DinhDocLap_API\DinhDocLap_API\bin\Debug\net5.0\Azure.Core.dll
+C:\Users\thayk\source\repos\DinhDocLap_API\DinhDocLap_API\DinhDocLap_API\bin\Debug\net5.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\thayk\source\repos\DinhDocLap_API\DinhDocLap_API\DinhDocLap_API\bin\Debug\net5.0\System.Memory.Data.dll

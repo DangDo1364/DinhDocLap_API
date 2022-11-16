@@ -64,7 +64,7 @@ namespace DinhDocLap_API.Data
 
                 c.HasOne(f => f.face)
                .WithMany(f => f.faceNodes)
-               .HasForeignKey(f => f.IDN)
+               .HasForeignKey(f => f.IDF)
                .HasConstraintName("FK_FaceNode_Face");
             });
             modelBuilder.Entity<FaceBlock>(c =>
